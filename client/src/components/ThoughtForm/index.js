@@ -9,23 +9,24 @@ const ThoughtForm = () => {
     const [addThought, { error }] = useMutation(ADD_THOUGHT, {
         update(cache, { data: { addThought } }) {
           try {
-            // could potentially not exist yet, so wrap in a try...catch
+            // update thought array's cache
+            // could potentially not exist yet, so wrap in a try/catch
             const { thoughts } = cache.readQuery({ query: QUERY_THOUGHTS });
             cache.writeQuery({
               query: QUERY_THOUGHTS,
-              data: { thoughts: [addThought, ...thoughts] }
+              data: { thoughts: [addThought, ...thoughts] },
             });
           } catch (e) {
             console.error(e);
           }
-      
-          // update me object's cache, appending new thought to the end of the array
+    
+          // update me object's cache
           const { me } = cache.readQuery({ query: QUERY_ME });
           cache.writeQuery({
             query: QUERY_ME,
-            data: { me: { ...me, thoughts: [...me.thoughts, addThought] } }
+            data: { me: { ...me, thoughts: [...me.thoughts, addThought] } },
           });
-        }
+        },
       });
 
     const handleChange = event => {
